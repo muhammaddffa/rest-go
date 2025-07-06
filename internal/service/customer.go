@@ -2,7 +2,10 @@ package service
 
 import (
 	"context"
+	"database/sql"
+	"time"
 
+	"github.com/google/uuid"
 	"shellrean.id/belajar-golang-rest-api/domain"
 	"shellrean.id/belajar-golang-rest-api/dto"
 )
@@ -31,4 +34,14 @@ func (c customerService) Index(ctx context.Context) ([]dto.CustomerData, error) 
 		})
 	}
 	return customerData, nil
+}
+
+func (c customerService) Create(ctx context.Context, req dto.CreateCustomerRequest) error{
+	customer := domain.Customer{
+		ID: uuid.NewString(),
+		Code: req.Code,
+		Name: req.Name,
+		CreatedAt: sql.NullTime{Valid: true, Time: time.Now()},
+	}
+	return c.customerRepository.Save(ctx, &customer)
 }
