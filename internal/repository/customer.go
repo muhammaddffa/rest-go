@@ -30,7 +30,7 @@ func (cr *customerRepository) FindById(ctx context.Context, id string) (result d
 	dataset := cr.db.From("customers").
 		Where(goqu.C("deleted_at").IsNull(), goqu.C("id").Eq(id))
 
-	_, err = dataset.ScanStructContext(ctx, &result)
+	_,  err = dataset.ScanStructContext(ctx, &result)
 	return
 }
 
@@ -55,5 +55,5 @@ func (cr *customerRepository) Delete(ctx context.Context, id string) error {
 
 	_, err := executor.ExecContext(ctx)
 	return err
-
 }
+
