@@ -17,11 +17,13 @@ func main(){
 	app := fiber.New()
 
 	customerRepository := repository.NewCustomer(dbConnection)
+	authRepository := repository.NewUser(dbConnection)
 	
 	customerService := service.NewCustomer(customerRepository)
-
+	authService := service.NewAuth(cnf, authRepository)
 
 	api.NewCustomer(app, customerService)
+	api.NewAuth(app, authService)
 	
 	app.Listen(cnf.Server.Host + ":" + cnf.Server.Port)
 }

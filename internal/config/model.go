@@ -1,8 +1,9 @@
 package config
 
 type Config struct {
-	Server Server
+	Server   Server
 	Database Database
+	Jwt      Jwt
 }
 
 type Server struct {
@@ -16,5 +17,10 @@ type Database struct {
 	Name string
 	User string
 	Pass string
-	Tz string
+	Tz   string
+}
+
+type Jwt struct {
+	Key string
+	Exp int
 }
