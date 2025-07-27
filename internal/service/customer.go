@@ -37,14 +37,24 @@ func (c customerService) Index(ctx context.Context) ([]dto.CustomerData, error) 
 	return customerData, nil
 }
 
-func (c customerService) Create(ctx context.Context, req dto.CreateCustomerRequest) error{
+func (c customerService) Create(ctx context.Context, req dto.CreateCustomerRequest) (dto.CustomerData, error){
 	customer := domain.Customer{
 		ID: uuid.NewString(),
 		Code: req.Code,
 		Name: req.Name,
 		CreatedAt: sql.NullTime{Valid: true, Time: time.Now()},
 	}
-	return c.customerRepository.Save(ctx, &customer)
+
+	err := c.customerRepository.Save(ctx, &customer)
+	if err != nil{
+		return dto.CustomerData{}, err
+	}
+
+	return dto.CustomerData{
+		ID:   customer.ID,
+		Code: customer.Code,
+		Name: customer.Name,
+	}, nil
 }
 
 func (c customerService) Update(ctx context.Context, req dto.UpdateCustomerRequest) error{

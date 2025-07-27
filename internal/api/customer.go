@@ -22,11 +22,11 @@ func NewCustomer(app *fiber.App,
 		customerService: customerService,
 	}
 
-	app.Get("/customers", auzMidd, ca.Index)
-	app.Post("/customers", auzMidd,ca.Create)
-	app.Put("/customers/:id", auzMidd,ca.Update)
-	app.Delete("/customers/:id", auzMidd,ca.Delete)
-	app.Get("/customers/:id", auzMidd, ca.Show)
+	app.Get("/customers", ca.Index)
+	app.Post("/customers",ca.Create)
+	app.Put("/customers/:id",ca.Update)
+	app.Delete("/customers/:id", ca.Delete)
+	app.Get("/customers/:id", ca.Show)
 }
 
 func (ca customerApi) Index(ctx *fiber.Ctx) error {
@@ -56,14 +56,14 @@ func (ca customerApi) Create(ctx *fiber.Ctx) error{
 			JSON(dto.CreateResponseErrorData("validation failed", fails))
 	}
 
-	err := ca.customerService.Create(c, req)
+	result, err := ca.customerService.Create(c, req)
 	if err != nil{
 		return ctx.Status(http.StatusInternalServerError).
 			JSON(dto.CreateResponseError(err.Error()))
 	}
 
 	return ctx.Status(http.StatusCreated).
-		JSON(dto.CreateResponseSuccess(""))
+		JSON(dto.CreateResponseSuccess(result))
 }
 
 func (ca customerApi) Update(ctx *fiber.Ctx) error{
