@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
 	jwtMid "github.com/gofiber/contrib/jwt"
@@ -14,6 +15,8 @@ import (
 )
 
 func main() {
+
+	fmt.Println("Program dimulai...")
 
 	cnf := config.Get()
 	dbConnection := connection.GetDatabase(cnf.Database)
@@ -29,12 +32,21 @@ func main() {
 
 	customerRepository := repository.NewCustomer(dbConnection)
 	authRepository := repository.NewUser(dbConnection)
+	bookRepository := repository.NewBook(dbConnection)
+	bookStockRepository := repository.NewBookStock(dbConnection)
 
 	customerService := service.NewCustomer(customerRepository)
 	authService := service.NewAuth(cnf, authRepository)
+	bookService := service.NewBook(bookRepository, bookStockRepository)
 
 	api.NewCustomer(app, customerService, jwtMidd)
 	api.NewAuth(app, authService)
+	api.NewBook(app, bookService, jwtMidd)
 
-	app.Listen(cnf.Server.Host + ":" + cnf.Server.Port)
+	fmt.Printf("Server berjalan di http://%s:%s\n", cnf.Server.Host, cnf.Server.Port)
+
+	if err := app.Listen(cnf.Server.Host + ":" + cnf.Server.Port); err != nil {
+		fmt.Println("Gagal menjalankan server:", err)
+
+	}
 }
